@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+	<th:block th:fragment="alert">
+		<!-- Success Alert -->
+		<div th:if="${success}" class="alert alert-success text-center">
+			<span th:text="${success}"></span>
+		</div>
+		<!-- Failure Alert -->
+		<div th:if="${error}" class="alert alert-danger text-center">
+			<span th:text="${error}"></span>
+		</div>
+		<script>
+		$(document).ready(function($) {
+				$('.alert').fadeOut(6000);
+			});
+		</script>
+	</th:block>
+</body>
+</html>

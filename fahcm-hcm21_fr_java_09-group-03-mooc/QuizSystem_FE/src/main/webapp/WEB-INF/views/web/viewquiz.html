@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<meta charset="UTF-8">
+	<th:block th:insert="~{web/fragments/head :: head-content}"></th:block>
+	<title>Quiz - Quizzies</title>
+</head>
+
+<body>
+	<!-- Header & Navigator -->
+	<th:block th:insert="~{web/fragments/header :: nav}"></th:block>
+	<th:block th:if="${finalScore}" th:insert="~{web/fragments/resultmodal :: result-modal}"></th:block>
+	<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+		<!-- Page Content -->
+		<main class="container-fuild py-5" style="min-height: 83vh;">
+			<th:block th:insert="~{web/fragments/alert :: alert}"></th:block>
+			<!-- Quiz -->
+			<div class="col-10 mx-auto pb-5">
+				<!-- Quiz Banner -->
+				<div class="row justify-content-center">
+					<img th:if="${quiz?.image}" alt="quiz-banner" th:src="${quiz.image}" class="m-auto img-fluid"
+						style="width:1024px; height:400px; object-fit:cover;" />
+					<img th:unless="${quiz?.image}" alt="quiz-banner" th:src="@{/static/img/quiz-default-banner.jpg}"
+						class="m-auto img-fluid" style="width:1024px; height:400px; object-fit:cover;" />
+				</div>
+				<!-- Quiz Title -->
+				<div class="row">
+					<h1 class="m-auto py-5" th:text="${quiz?.title}">Title</h1>
+				</div>
+				<!-- Quiz Subjects -->
+				<div class="row">
+					<div class="m-auto">
+						<th:block th:each="subject : ${quiz?.subjects}">
+							<span class="badge badge-warning" th:text="${subject.name}">Math</span>
+						</th:block>
+					</div>
+				</div>
+				<!-- Quiz Info -->
+				<div class="row py-4">
+					<p class="text-muted m-auto">
+						<i class="fas fa-graduation-cap"></i> <span th:text="${quiz.educationLevel}">HIGH
+							SCHOOL</span>&nbsp; <i class="far fa-clock"></i> <span th:text="${quiz.timeLimit}">10</span>
+						minutes &nbsp; <i class="far fa-list-alt"></i> <span th:text="${quiz.questions.size}">10</span>
+						question<span th:if="${quiz.questions.size > 1}">s</span> &nbsp; <i
+							class="far fa-play-circle"></i> <span th:text="${quiz.plays}">100</span>
+						play<span th:if="${quiz.plays > 1}">s</span>&nbsp; <i class="fas fa-redo-alt"></i> <span
+							th:text="${quiz.maxAttempts}">1</span> attempt<span th:if="${quiz.maxAttempts > 1}">s</span>
+					</p>
+				</div>
+
+				<th:block th:if="${session.account?.user}">
+					<!-- Teacher only -->
+					<th:block th:if="${session.account?.user?.role != 'STUDENT'}">
+						<!-- Question -->
+						<div class="border border-muted col-md-9 p-5 m-auto" th:each="question,i : ${quiz.questions}">
+							<h5 class="pb-4">
+								<span th:text="${i.index + 1}">1</span>. <span th:text="${question.text}">Hello</span>
+							</h5>
+							<img th:if="${question.image}" th:src="${question.image}" style="width:500px; height:auto"
+								class="img-fluid pb-3" />
+							<!-- Answer -->
+							<div class="form-group row pl-5" th:each="answer,j : ${question.answers}">
+								<label class="form-check-label" th:switch="${j.index}">
+									<span th:case="0">A. <span th:text="${answer.text}"></span></span>
+									<span th:case="1">B. <span th:text="${answer.text}"></span></span>
+									<span th:case="2">C. <span th:text="${answer.text}"></span></span>
+									<span th:case="3">D. <span th:text="${answer.text}"></span></span>
+									<span th:case="4">E. <span th:text="${answer.text}"></span></span>
+									<span th:case="5">F. <span th:text="${answer.text}"></span></span>
+									<span th:case="6">G. <span th:text="${answer.text}"></span></span>
+									<span th:case="7">H. <span th:text="${answer.text}"></span></span>
+									<span th:case="8">I. <span th:text="${answer.text}"></span></span>
+									<span th:case="9">J. <span th:text="${answer.text}"></span></span>
+								</label>
+							</div>
+						</div>
+					</th:block>
+					<!-- Buttons -->
+					<div class="row justify-content-center">
+						<!-- Edit quiz button - Teacher only -->
+						<a class="btn btn-info mx-auto my-5 text-light" type="submit"
+							th:href="@{/auth/quiz/edit/__${quiz.id}__}"
+							th:if="${session.account?.user?.role != 'STUDENT'}">Edit Quiz</a>
+						<!-- Start quiz button - Student only -->
+						<a class="btn btn-primary mx-auto my-5 text-light" type="submit"
+							th:href="@{/auth/quiz/take/__${quiz.id}__}"
+							th:if="${session.account?.user?.role != 'TEACHER'}">Start
+							Quiz</a>
+					</div>
+				</th:block>
+			</div>
+		</main>
+		<!-- Alert -->
+		<th:block th:insert="~{web/fragments/toast :: alert}"></th:block>
+	</div>
+
+	<!-- Footer -->
+	<th:block th:insert="~{web/fragments/footer :: footer}"></th:block>
+</body>
+
+</html>

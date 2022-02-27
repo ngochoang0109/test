@@ -1,0 +1,237 @@
+/* Header */
+.avatar-sm {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    object-fit: cover;
+}
+.btn-create {
+    font-weight: 600;
+    color: #0275d8 !important;
+    background-color: #aceeec;
+    opacity: 1 !important;
+    display: inline-flex;
+    align-items: center;
+    border:none; 
+    border-radius:6px; 
+    max-height:32px;
+}
+.btn-create:hover {
+    background-color: #00ff40;
+}
+.form-input-search {
+    border: none;
+    border-radius: 6px 0 0 6px;
+    height: 32px;
+    background-color: #aceeec;
+    border:none; 
+    width:200px;
+}
+.form-input-search:focus {
+    background-color: #ffffff;
+    width: 220px;
+}
+.btn-search {
+    border-radius: 0 6px 6px 0;
+    background: #aceeec;
+    display: inline-flex;
+    align-items: center;
+    border:none; 
+    height:32px; 
+    width:32px;
+}
+.btn-search:hover {
+    background: #36c5c0;
+}
+
+/* Login & Signup */
+.container-fluid.row {
+    height: 100vh;
+}
+.left-panel {
+    background: #3555dc url(https://ibb.co/mRwmTm9);
+    background-position: top center;
+    height: 100vh;
+    background-repeat: repeat;
+}
+.google-logo {
+    position: relative;
+    bottom: 2px;
+    height: 24px;
+    padding-right: 3px;
+}
+.btn-google {
+    height: 56px;
+    border: 2px solid rgb(175, 175, 175);
+    padding-top: 13px;
+    color:rgb(122, 122, 122);
+    font-weight: 600;
+}
+.btn-google:hover {
+    border-color:rgb(95, 95, 95);
+    color:rgb(73, 73, 73);
+}
+
+.site-banner {
+    padding-top: 124px;
+    font-weight:600;
+}
+hr {
+    position: relative;
+    top: 20px;
+}
+
+/* Error */
+.error {
+    color: #f86541;
+}
+.errorClass {
+    border-color: #f86541;
+}
+
+/* Form & Input */
+.form-control {
+    border: none;
+    border-bottom: 2px rgb(95, 95, 95) solid;
+    border-radius: 0px;
+    padding: 0px;
+}
+.form-group.row>label, 
+.form-group>label {
+    font-weight: 600;
+    padding-top: 5px;
+}
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+.uneditable-input:focus,
+.form-control:focus {
+    border-color: #ee7e3e;
+    border-width: 3px;
+    box-shadow: none;
+    outline: 0 none;
+}
+select.form-control {
+    padding-bottom: 2px;
+}
+.form-check-label {
+    font-weight: normal !important;
+    position: relative;
+}
+
+/* Home */
+.card.quiz-card {
+    width: 300px;
+    border-radius: 6px;
+    margin: 10px;
+}
+.card.question-card {
+    width: auto;
+    max-width: 930px;
+    min-height: 260px;
+}
+.card:hover {
+    box-shadow: 3px 3px 5px 3px rgba(95, 95, 95, 0.4);
+}
+.card-header>img {
+    object-fit: cover;
+    height: 180px; 
+    width: 298px;
+    border-radius: 6px;
+}
+.fas.fa-bookmark {
+    color: #ee7e3e;
+    font-size: 16pt;
+}
+
+/* Bootstrap color */
+.text-muted {
+    color: rgb(110, 110, 110) !important;
+}
+.bg-primary,
+.btn-primary {
+    background-color: #3555dc !important;
+    border-color: #3555dc !important;
+}
+.btn-primary:hover {
+    background-color: #3347a0 !important;
+}
+.btn-outline-primary {
+    border-color: #3555dc !important;
+    color: #3555dc !important;
+}
+.badge-primary,
+.btn-outline-primary:hover {
+    color: white !important;
+    background-color: #3555dc !important;
+}
+.text-dark {
+    color:#39281e !important;
+}
+.text-primary {
+    color: #3555dc !important;
+}
+
+/* Popup */
+.modal-content {
+    border: none;
+    border-radius: 6px;
+}
+.btn-interest-unselect {
+    border-color:#36c5c0;
+}
+.btn-interest-select,
+.btn-interest-unselect:hover {
+    border-color:#aceeec;
+    background-color: #aceeec;
+}
+.btn-interest-unselect input:checked + span {
+    background-color: #aceeec;
+}
+
+/* Other */
+.badge {
+    font-weight: 600;
+    padding: 8px 10px;
+}
+.badge-warning {
+    color: white !important;
+    font-size: 11pt;
+}
+.y-axis-label {
+    position: absolute;
+    transform: translateX(-50%) rotate(-90deg);
+    top: 40%;
+    padding-bottom: 10px;
+}
+
+/* Image */
+.avatar-lg { 
+    width: 200px !important;
+    height: 200px !important;
+    border-radius: 50% !important;
+    object-fit: cover;
+}
+.img-preview {
+    object-fit: cover;
+    opacity: 0.7;
+    border-radius: 2px;
+}
+.image-input {
+    border: 3px dashed rgb(95, 95, 95);
+    border-radius: 6px;
+    width: 115px;
+    height: 115px;
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<th:block th:insert="~{web/fragments/head :: head-content}"></th:block>
+	<title>Home - Quizzies</title>
+</head>
+
+
+<body class="d-flex flex-column">		
+	<form th:action="@{/auth/user/role}" method="POST" th:object="${user}" id ="formRole">
+	
+	<!-- Select Role Popup -->
+	<th:block th:if="${session.account?.user!= null && session.account?.user?.role==null}" th:insert="~{web/fragments/newpopup.html :: role-modal}"></th:block>
+	<!-- Select Education Level Popup -->
+	<th:block th:if="${session.account?.user!= null && session.account?.user?.educationLevel == null}" th:insert="~{web/fragments/newpopup.html :: education-level-modal}"></th:block>
+	<!-- Select Interest Popup -->
+	<th:block th:if="${session.account?.user!= null && #lists.isEmpty(session.account?.user?.interests)}" th:insert="~{web/fragments/newpopup.html :: interests-modal}"></th:block>
+
+ 	</form>
+
+	<!-- Header & Navigation Bar -->
+	<th:block th:insert="~{web/fragments/header :: nav}"></th:block>
+	<!-- Body -->
+	<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+		<!-- Page Content -->
+		<main class="container-fluid py-5 ml-5" style="min-height:83vh;">
+			<div class="col-10 mx-auto pb-5">
+				<h4>
+					<i class="fas fa-bookmark"></i>&nbsp;Popular Quizzes
+				</h4>
+				<div class="row">
+					<!-- Quiz -->
+					<th:block th:each="quiz : ${popularList}">
+						<div class="card quiz-card" th:onclick="|location.href='@{/quiz/view/{id}(id=${quiz.id})}'|">
+							<div class="card-header m-0 p-0">
+								<img th:if="${quiz.image}" alt="quiz-banner" th:src="${quiz.image}" />
+								<img th:unless="${quiz.image}" alt="quiz-banner" th:src="@{/static/img/quiz-default-banner.jpg}" />
+							</div>
+							<div class="card-body">
+								<!-- Quiz Title -->
+								<h5 th:text="${quiz.title}">Title</h5>
+								<p class="text-muted">
+									<i class="far fa-list-alt"></i>&nbsp;<span
+										th:text="${quiz.questions.size}">10</span>&nbsp;question<span th:if="${quiz.questions.size > 1}">s</span>
+									&nbsp;&nbsp;
+									<i class="far fa-play-circle"></i>&nbsp;<span
+										th:text="${quiz.plays}">1000</span>&nbsp;play<span th:if="${quiz.plays > 1}">s</span>
+								</p>
+							</div>
+						</div>
+					</th:block>
+				</div>
+			</div>
+			<!-- Login với role = student -->
+
+			<div th:if="${session.account?.user != null && session.account?.user?.role == 'STUDENT'}" class="col-10 mx-auto pb-5">
+				<h4>
+					<i class="fas fa-bookmark"></i>&nbsp;Recommendation For You
+				</h4>
+				<div class="row">
+					<!-- Quiz -->
+					<th:block th:each="quiz : ${recommendationList}">
+						<div class="card quiz-card" th:onclick="|location.href='@{/quiz/view/{id}(id=${quiz.id})}'|">
+							<div class="card-header m-0 p-0">
+								<img th:if="${quiz.image}" alt="quiz-banner" th:src="${quiz.image}" />
+								<img th:unless="${quiz.image}" alt="quiz-banner" th:src="@{/static/img/quiz-default-banner.jpg}" />
+							</div>
+							<div class="card-body">
+								<!-- Quiz Title -->
+								<h5 th:text="${quiz.title}">Title</h5>
+								<p class="text-muted">
+									<i class="far fa-list-alt"></i>&nbsp;<span
+										th:text="${quiz.questions.size}">10</span>&nbsp;question<span th:if="${quiz.questions.size > 1}">s</span>
+									&nbsp;&nbsp;
+									<i class="far fa-play-circle"></i>&nbsp;<span
+										th:text="${quiz.plays}">1000</span>&nbsp;play<span th:if="${quiz.plays > 1}">s</span>
+								</p>
+							</div>
+						</div>
+					</th:block>
+				</div>
+			</div>
+			<!-- end -->
+			<!-- <div class="col-10 mx-auto pb-5">
+				<th:block th:each="subject : ${subjectList}">
+					Subject Name
+					<h4>
+						<i class="fas fa-bookmark"></i> <span th:text="${subject.name}"></span>
+					</h4>
+					<div class="row">
+						Quiz
+						<th:block th:each="quiz : ${subject.quizzes}">
+							<div class="card quiz-card" th:onclick="|location.href='@{/{id}(id=${quiz.id})/quiz}'|">
+								<div class="card-header m-0 p-0">
+									<img th:if="${quiz.image}" alt="quiz-banner" th:src="${quiz.image}" />
+									<img th:unless="${quiz.image}" alt="quiz-banner" th:src="@{/static/img/quiz-default-banner.jpg}" />
+								</div>
+								<div class="card-body">
+									Quiz Title
+									<h5 th:text="${quiz.title}">Title</h5>
+									<p class="text-muted">
+										<i class="far fa-list-alt"></i>&nbsp;<span
+											th:text="${quiz.questions.size}">10</span>&nbsp;questions
+										&nbsp;&nbsp;
+										<i class="far fa-play-circle"></i>&nbsp;<span
+											th:text="${quiz.plays}">1000</span>&nbsp;plays
+									</p>
+								</div>
+							</div>
+						</th:block>
+					</div>
+				</th:block>
+			</div> -->
+		
+		</main>
+		<!-- End of Page Content -->
+
+		<!-- Alert -->
+		<th:block th:insert="~{web/fragments/toast :: alert}"></th:block>
+	</div>
+	<!-- End of Body -->
+
+	<!-- Footer -->
+	<th:block th:insert="~{web/fragments/footer :: footer}"></th:block>
+</body>
+
+</html>

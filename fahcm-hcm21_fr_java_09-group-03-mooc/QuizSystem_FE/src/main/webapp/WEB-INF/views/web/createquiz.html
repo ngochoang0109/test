@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<th:block th:insert="~{web/fragments/head :: head-content}"></th:block>
+<script th:src="@{/static/js/create-quiz.js}"></script>
+<th:block th:switch="${page}">
+	<title th:case="'create'">Create Quiz - Quizzies</title>
+	<title th:case="'edit'">Edit Quiz - Quizzies</title>
+</th:block>
+</head>
+
+<body>
+	<!-- Header & Navigation Bar -->
+	<th:block th:insert="~{web/fragments/header :: nav}"></th:block>
+
+	<div aria-live="polite" aria-atomic="true"
+		style="position: relative; min-height: 200px;">
+		<!-- Page Content -->
+		<main class="container-fuild py-5 ml-5" style="min-height: 83vh;">
+			<!-- Alert -->
+			<th:block th:insert="~{web/fragments/alert :: alert}"></th:block>
+			<div class="col-7 mx-auto pb-5">
+				<div class="row justify-content-between">
+					<div class="col-auto" th:switch="${page}">
+						<h2 class="pb-4" th:case="'create'">Create a new quiz</h2>
+						<h2 class="pb-4" th:case="'edit'">Edit quiz</h2>
+						<th:block th:insert="~{web/fragments/alert :: alert}"></th:block>
+					</div>
+					<div class="col-auto">
+						<form th:action="@{/auth/quiz/edit/file}" method="POST"
+							class="file-upload-form" enctype="multipart/form-data">
+							<label class="btn btn-outline-primary"> <input
+								style="display: none" type="file" id="getfile" name="file"
+								accept=".xlsx" onchange="submitFile()" /> <i
+								class="fas fa-file-excel"></i>&nbsp;Import from xls
+							</label>
+						</form>
+					</div>
+					<div class="col-auto">
+						<a class="btn btn-outline-primary"
+							th:href="@{/auth/quiz/download/file-template}"> <i
+							class="fas fa-file-excel"></i>&nbsp;Dowload file xls template
+						</a>
+					</div>
+					<form th:action="@{/auth/quiz/create}" th:object="${quiz}"
+						method="POST" th:switch="${page}" enctype="multipart/form-data">
+						<input type="hidden" th:field="*{plays}">
+
+						<div class="form-group">
+							<input type="text" th:field="*{title}" id="title"
+								placeholder="Enter a title" class="form-control col-11" required />
+							<label for="title" class="text-muted">TITLE</label>
+						</div>
+						<div class="form-group pb-2">
+							<input type="text" th:field="*{description}" id="description"
+								placeholder="Add a description" class="form-control col-11" />
+							<label for="description" class="text-muted">DESCRIPTION</label>
+						</div>
+						<div class="form-check form-check-inline"
+							th:each="subject,i : ${subjectList}">
+							<input type="checkbox"
+								th:name="'subjects[' + ${i.index} + '].id'"
+								th:value="${subject.id}"
+								th:checked="${quiz.find(__${subject.id}__)}"
+								th:id="'subjects' + ${i.index} + '.id'" class="form-check-input" />
+							<label for="image" class="form-check-label text-muted"
+								style="bottom: 0;" th:text="${subject.name}">Math</label>
+						</div>
+						<div class="form-group">
+							<input class="form-control col-11" type="" style="height: 5px" />
+							<label class="text-muted">SUBJECTS</label>
+						</div>
+						<div class="row">
+							<div class="col-auto">
+								<div class="form-group">
+									<input type="number" th:field="*{timeLimit}" id="time-limit"
+										value="1" min="1" class="form-control" required
+										style="width: 170px;" /> <label for="timeLimit"
+										class="text-muted">TIME LIMIT (MINUTES)</label>
+								</div>
+							</div>
+							<div class="col-auto">
+								<div class="form-group">
+									<select th:field="*{educationLevel}" id="education-level"
+										class="form-control pl-0" style="width: 150px;">
+										<option disabled selected value=""></option>
+										<option value="KINDERGARTEN" class="text-muted pl-0">KINDERGARTEN</option>
+										<option value="ELEMENTARY" class="text-muted pl-0">ELEMENTARY</option>
+										<option value="SECONDARY" class="text-muted pl-0">SECONDARY</option>
+										<option value="HIGHSCHOOL" class="text-muted pl-0">HIGH
+											SCHOOL</option>
+										<option value="UNIVERSITY" class="text-muted pl-0">UNIVERSITY</option>
+									</select> <label for="education-level" class="text-muted">EDUCATION
+										LEVEL</label>
+								</div>
+							</div>
+							<div class="col-auto">
+								<div class="form-group">
+									<select th:field="*{status}" id="status"
+										class="form-control pl-0" style="width: 100px;">
+										<option value="0" class="text-muted pl-0"selected>Draft</option>
+										<option value="1" class="text-muted pl-0">Published</option>
+									</select> <label for="status" class="text-muted">STATUS</label>
+								</div>
+							</div>
+							<div class="col-auto">
+								<div class="form-group">
+									<input type="number" th:field="*{maxAttempts}"
+										id="max-attempts" value="1" min="1" class="form-control"
+										required style="width: 170px;" /> <label for="maxAttempts"
+										class="text-muted">MAXIMUM ATTEMPTS</label>
+								</div>
+							</div>
+							<div class="col-auto">
+								<div class="form-group">
+									<input type="file" th:field="*{fileImg}" id="image"
+										accept=".png,.jpeg,.jpg" placeholder="Add a banner"
+										class="form-control" style="width: 256px" /> <label
+										for="image" class="text-muted">BANNER</label>
+								</div>
+							</div>
+						</div>
+
+						<!-- Create Quiz -->
+						<div class="container align-items-center justify-content-center"
+							th:case="'create'">
+							<th:block th:each="q : ${#numbers.sequence(0,1)}">
+								<th:block th:with="questionNo=${q}">
+									<div class="card question-card px-4 pb-5 my-3">
+										<div class="row justify-content-end">
+											<div class="dismissBtn" style="font-size: 22pt">&times;</div>
+										</div>
+										<div class="row">
+											<div class="col-7">
+												<div class="form-group">
+													<input type="text"
+														th:name="'questions[' + ${questionNo} + '].text'"
+														th:id="'questions' + ${questionNo} + '.text'"
+														placeholder="Enter a question" class="form-control"
+														required /> <label class="text-muted">QUESTION</label>
+												</div>
+											</div>
+											<div class="col-auto">
+												<div class="form-check pt-4">
+													<input type="checkbox"
+														th:name="'questions[' + ${questionNo} + '].multiple'"
+														value="1" th:attr="data-value=${questionNo}"
+														class="form-check-input multiple"
+														th:id="'questions' + ${questionNo} + '.multiple1'" /> <label
+														class="text-muted form-check-label"
+														th:for="'questions' + ${questionNo} + '.multiple1'">Multiple
+														Correct Answers</label>
+												</div>
+											</div>
+											<div class="col-auto">
+												<div class="form-group">
+													<input type="file"
+														th:name="'questions[' + ${questionNo} + '].fileImg'"
+														class="form-control" accept=".png,.jpg,.jpeg" /> <label
+														class="text-muted">IMAGE</label>
+												</div>
+											</div>
+										</div>
+										<!-- Answer -->
+										<div th:id="'allAnswers' + ${questionNo}">
+											<div class="row"
+												th:each="answerNo : ${#numbers.sequence(0,1)}">
+												<div class="col-6">
+													<div class="form-group">
+														<input type="text"
+															th:name="'questions[' + ${questionNo} + '].answers[' + ${answerNo} + '].text'"
+															th:id="'questions' + ${questionNo} + '.answers' + ${answerNo} + '.text'"
+															placeholder="Enter an answer" class="form-control"
+															required /> <label class="text-muted">ANSWER</label>
+													</div>
+												</div>
+												<div class="col-auto">
+													<div class="dismissAnswerBtn" style="font-size: 18pt">&times;</div>
+												</div>
+												<div class="col-auto">
+													<!-- 1 đáp án đúng -->
+													<div class="form-check pt-4">
+														<input type="radio"
+															th:id="'questions' + ${questionNo} + '.answers' + ${answerNo} + '.correct1'"
+															th:name="'questions[' + ${questionNo} + '].answers[' + ${answerNo} + '].correct'"
+															value="1"
+															th:class="'form-check-input answer' + ${questionNo}" />
+														<label class="text-muted form-check-label"
+															th:for="'questions' + ${questionNo} + '.answers' + ${answerNo} + '.correct1'">Correct</label>
+													</div>
+												</div>
+											</div>
+											<!-- New Answer Button -->
+											<div class="new-answer-container">
+												<div class="row">
+													<div class="col-6">
+														<button type="button"
+															class="btn btn-outline-dark addAnswerBtn" value="1"
+															th:attr="data-value=${questionNo}">Add Answer</button>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- End of Answer -->
+									</div>
+								</th:block>
+							</th:block>
+							<!-- New Question Button -->
+							<div>
+								<div class="card question-card p-4 my-3" id="addQuestionBtn"
+									data-value="1">
+									<div
+										class="d-flex align-items-center justify-content-center my-auto">
+										<span
+											style="border-bottom: solid 5px #2ad3ce; font-weight: 600; padding-bottom: 10px;">
+											+ ADD QUESTION </span>
+									</div>
+								</div>
+							</div>
+							<button type="submit" class="btn btn-primary py-3 col-2"
+								style="font-size: 20px; font-weight: 600">CREATE</button>
+						</div>
+
+						<!-- Edit Quiz -->
+						<div class="container align-items-center justify-content-center"
+							th:case="'edit'">
+							<!-- hidden id -->
+							<input type="hidden" th:field="*{id}">
+							<input type="hidden" th:field="*{image}">
+							<!-- Question -->
+							<div class="card question-card px-4 pb-5 my-3"
+								th:each="question,i : ${quiz.questions}">
+								<input type="hidden" th:field="*{questions[__${i.index}__].id}">
+									<input type="hidden" th:field="*{questions[__${i.index}__].image}">
+								<div class="row justify-content-end">
+									<div class="dismissBtn" style="font-size: 22pt">&times;</div>
+								</div>
+								<div class="row">
+									<div class="col-7">
+										<div class="form-group">
+											<input type="text"
+												th:field="*{questions[__${i.index}__].text}"
+												placeholder="Enter a question" class="form-control" required />
+											<label class="text-muted">QUESTION</label>
+										</div>
+									</div>
+									<div class="col-5">
+										<div class="form-check pt-4">
+											<input type="checkbox"
+												th:field="*{questions[__${i.index}__].multiple}" value="1"
+												th:attr="data-value=${i.index}"
+												th:checked="${question.multiple}"
+												class="form-check-input multiple" /> <label
+												class="text-muted form-check-label"
+												th:for="'questions'+${i.index}+'.multiple1'">
+												Multiple Correct Answers </label>
+										</div>
+									</div>
+									<div class="col-auto">
+										<div class="form-group">
+											<input type="file"
+												th:field="*{questions[__${i.index}__].fileImg}"
+												class="form-control" accept=".png,.jpg,.jpeg" /> <label
+												class="text-muted">IMAGE</label>
+										</div>
+									</div>
+								</div>
+								<!-- Answer -->
+								<div th:id="'allAnswers' + ${i.index}">
+									<div class="row" th:each="answer,j : ${question.answers}">
+										<input type="hidden"
+											th:field="*{questions[__${i.index}__].answers[__${j.index}__].id}">
+										<div class="col-6">
+											<div class="form-group">
+												<input type="text"
+													th:field="*{questions[__${i.index}__].answers[__${j.index}__].text}"
+													placeholder="Enter an answer" class="form-control" required />
+												<label class="text-muted">ANSWER</label>
+											</div>
+										</div>
+										<div class="col-auto">
+											<div class="dismissAnswerBtn" style="font-size: 18pt">&times;</div>
+										</div>
+										<div class="col-auto">
+											<div class="form-check pt-4" th:switch="${question.multiple}">
+												<!-- 1 đáp án đúng -->
+												<input th:case="false" type="radio"
+													th:checked="${answer.correct}"
+													th:field="*{questions[__${i.index}__].answers[__${j.index}__].correct}"
+													value="1" th:class="'form-check-input answer' + ${j.index}" />
+												<!-- Nhiều đáp án đúng -->
+												<input th:case="true" type="checkbox"
+													th:checked="${answer.correct}"
+													th:field="*{questions[__${i.index}__].answers[__${j.index}__].correct}"
+													value="1" th:class="'form-check-input answer' + ${j.index}" />
+												<label class="text-muted form-check-label"
+													th:for="'questions'+${i.index}+'.answers'+${j.index}+'.correct1'">Correct</label>
+											</div>
+										</div>
+									</div>
+									<!-- New Answer Button -->
+									<div class="new-answer-container">
+										<div class="row">
+											<div class="col-6">
+												<button type="button"
+													class="btn btn-outline-dark addAnswerBtn"
+													th:attr="data-value=${i.index}"
+													th:value="${question.answers.size}">Add Answer</button>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- End of Answer -->
+							</div>
+							<!-- New Question Button -->
+							<div>
+								<div class="card question-card p-4 my-3" id="addQuestionBtn"
+									th:attr="data-value=${quiz.questions.size - 1}">
+									<div
+										class="d-flex align-items-center justify-content-center my-auto">
+										<span
+											style="border-bottom: solid 5px #2ad3ce; font-weight: 600; padding-bottom: 10px;">
+											+ ADD QUESTION </span>
+									</div>
+								</div>
+							</div>
+							<!-- End of Question -->
+							<button type="submit" class="btn btn-primary py-3 col-2"
+								style="font-size: 20px; font-weight: 600">SAVE CHANGE</button>
+						</div>
+						<!-- End of Edit Quiz -->
+
+					</form>
+				</div>
+		</main>
+		<!-- Alert -->
+		<!-- <th:block th:insert="~{web/fragments/toast :: alert}"></th:block> -->
+	</div>
+
+	<!-- Footer -->
+	<th:block th:insert="~{web/fragments/footer :: footer}"></th:block>
+</body>
+
+</html>

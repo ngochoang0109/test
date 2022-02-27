@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<th:block th:insert="~{web/fragments/head.html :: head-content}"></th:block>
+<title>Edit Profile - Quizzies</title>
+</head>
+
+<body>
+	<th:block th:insert="~{web/fragments/header.html :: nav}"></th:block>
+
+	<div aria-live="polite" aria-atomic="true"
+		style="position: relative; min-height: 200px;">
+		<!-- Page Content -->
+		<main class="container-fuild pl-4 my-auto py-3" style="min-height:83vh;">
+			<div class="row border-bottom border-muted py-3">
+				<div class="col-sm-2 text-right pt-1">
+					<h4>Profile Picture</h4>
+				</div>
+				<div class="col-sm-4 ml-5">
+					<form th:action="@{/auth/user/update-image}" method="POST"
+						class="file-upload-form" enctype="multipart/form-data">
+
+						<label
+							class="image-input d-flex justify-content-center align-items-center">
+							<input type='file' id="getfile" name="file"
+							accept=".jpg,.jpeg,.png" onchange="submitFile()"
+							style="display: none;" /> <img th:if="${user.avatar}"
+							class="img-preview" th:src="${user.avatar}" alt="preview"
+							width="100px" height="100px"
+							style="z-index: 1; position: absolute;" /> <img
+							th:unless="${user.avatar}" class="img-preview"
+							th:src="@{/static/img/upload-icon.png}" alt="preview"
+							width="64px" height="64px"
+							style="z-index: 1; position: absolute;" /> <span
+							class="text-muted"
+							style="z-index: 2; position: absolute; font-size: 8pt; font-weight: 700">CHANGE
+								AVATAR</span>
+						</label>
+					</form>
+				</div>
+				<div class="col-sm-4">
+					<!-- Alert -->
+					<th:block th:insert="~{web/fragments/alert.html :: alert}"></th:block>
+				</div>
+			</div>
+
+			<form th:action="@{/auth/user/update}" method="POST"
+				th:object="${user}">
+				<div class="row border-bottom border-muted py-3">
+					<div class="col-sm-2 text-right pt-1">
+						<h4>Basic Information</h4>
+					</div>
+					<div class="col-sm-4 ml-5" style="padding-left: 31px;">
+						<div class="form-group row">
+							<input type="text" th:field="*{name}" id="name"
+								class="form-control" /> <label for="name" class="text-muted">NAME</label>
+						</div>
+						<div class="form-group row">
+							<input type="date" placeholder="yyyy-MM-dd"
+								th:field="*{birthdate}" id="birthdate" class="form-control" />
+							<label for="birthdate" class="text-muted">DATE OF BIRTH</label>
+						</div>
+						<!-- if role = student -->
+						<th:block th:if="${user.role != 'TEACHER'}">
+							<div class="form-group row">
+								<label for="education-level" class="text-muted">EDUCATION
+									LEVEL:</label>&nbsp; <select id="education-level"
+									class="form-control pl-0" style="width: 140px;"
+									th:field="*{educationLevel}">
+									<option disabled value=""
+										th:selected="(null == ${user.educationLevel})"></option>
+									<option th:value="KINDERGARTEN" class="text-muted pl-0"
+										th:selected="('KINDERGARTEN' == ${user.educationLevel})">
+										KINDERGARTEN</option>
+									<option th:value="ELEMENTARY" class="text-muted pl-0"
+										th:selected="('ELEMENTARY' == ${user.educationLevel})">
+										ELEMENTARY</option>
+									<option th:value="SECONDARY" class="text-muted pl-0"
+										th:selected="('SECONDARY' == ${user.educationLevel})">SECONDARY
+									</option>
+									<option th:value="HIGHSCHOOL" class="text-muted pl-0"
+										th:selected="('HIGHSCHOOL' == ${user.educationLevel})">HIGH
+										SCHOOL</option>
+									<option th:value="UNIVERSITY" class="text-muted pl-0"
+										th:selected="('UNIVERSITY' == ${user.educationLevel})">
+										UNIVERSITY</option>
+								</select>
+							</div>
+							<div class="form-group row" id="education-level-error"></div>
+							<div class="form-group row">
+								<label for="password" class="text-muted">INTERESTS:</label>
+							</div>
+							<div class="row">
+								<div class="form-check form-check-inline"
+									th:each="subject,i : ${subjectList}">
+									<input type="checkbox"
+										th:name="'interests[' + ${i.index} + '].id'"
+										th:value="${subject.id}"
+										th:checked="${user.find(__${subject.id}__)}"
+										th:id="'interests' + ${i.index} + '.id'"
+										class="form-check-input" /> <label
+										th:for="'interests' + ${i.index} +'.id'"
+										class="form-check-label" th:text="${subject.name}">Math</label>
+								</div>
+							</div>
+						</th:block>
+						<!-- end of if -->
+						<div class="form-group row pt-3">
+							<button type="submit" class="btn btn-primary">Save
+								Change</button>
+						</div>
+					</div>
+				</div>
+			</form>
+			<div class="row py-3">
+				<div class="col-sm-2 text-right pt-1">
+					<h4>Password</h4>
+				</div>
+				<div class="col-sm-4 ml-5">
+					<!-- Button trigger modal -->
+					<button type="button" class="btn btn-primary" data-toggle="modal"
+						data-target="#passwordModal" data-backdrop="static">
+						Change Password</button>
+				</div>
+			</div>
+
+			<!-- Change Password Modal -->
+			<div class="modal fade" id="passwordModal" tabindex="-1"
+				role="dialog" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Change Password</h5>
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<form th:action="@{/auth/user/update-password}" method="post"
+							id="change-password" th:object="${userpass}" class="px-5">
+
+							<div class="modal-body p-5">
+
+								<div class="form-group row">
+									<input th:field="*{password}" type="password"
+										name="old-password" id="old-password" class="form-control"
+										placeholder="Type your current password" /> <label
+										class="text-muted">Current Password</label>
+								</div>
+								<div class="form-group row">
+									<input th:field="*{newPassword}" type="password"
+										name="password" id="password" class="form-control"
+										placeholder="Type your new password" /> <label
+										class="text-muted">New Password</label>
+								</div>
+								<div class="form-group row">
+									<input type="password" name="repassword" id="repassword"
+										class="form-control" placeholder="Retype new password" /> <label
+										class="text-muted">Confirm New Password</label>
+								</div>
+
+							</div>
+							<div class="modal-footer">
+								<button type="submit" for="change-password"
+									class="btn btn-primary">Change Password</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<!-- Alert -->
+		<!-- <th:block th:insert="~{web/fragments/toast.html :: alert}"></th:block> -->
+	</div>
+	<!-- Footer -->
+	<th:block th:insert="~{web/fragments/footer.html :: footer}"></th:block>
+
+</body>
+
+</html>

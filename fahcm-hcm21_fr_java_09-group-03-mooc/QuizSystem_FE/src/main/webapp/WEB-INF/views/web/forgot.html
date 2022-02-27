@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8" />
+    <th:block th:insert="~{web/fragments/head :: head-content}"></th:block>
+    <script th:src="@{/static/js/register-validation.js}"></script>
+    <title>Forgot Password - Quizzies</title>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    <div class="container-fluid row">
+        <!-- Left Panel -->
+        <th:block th:insert="~{web/login :: left-panel}"></th:block>
+        <!-- Right Panel -->
+        <div class="col-md-4 m-auto">
+            <!-- Navigation Bar -->
+            <nav class="navbar navbar-expand-sm navbar-light pl-0">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link h3" th:href="@{/signup}">Sign up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link h3" th:href="@{/login}">Log in</a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- Reset Password Form -->
+            <div class="mx-auto">
+                <th:block th:insert="~{web/fragments/alert :: alert}"></th:block>
+                <div id="alert"></div>
+                <div class="my-3 btn btn-google col-12">Find Lost Password</div>
+                <form class="m-3" th:action="@{/forgot-password}" method="POST" th:object="${user}">
+                    <div class="form-group row">
+                        <input type="email" th:field="*{email}" id="email" placeholder="Type your email"
+                            class="form-control" />
+                        <label for="email" class="text-muted">EMAIL</label>
+                    </div>
+                    <div class="form-group row justify-content-start align-items-center">
+                        <div class="col-5 pl-0 ml-0">
+                            <input type="text" id="code" th:field="*{verificationCode}" placeholder="Type your code"
+                            class="form-control" />
+                            <label for="code" class="text-muted" style="font-weight:600; padding-top:5px;">CODE</label>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-info" onclick="sendCode()">Send Code</button>
+                        </div>
+                    </div>
+                    <div id="reset-password" style="display:none;">
+                        <div class="form-group row">
+                            <input type="password" th:field="*{password}" id="password" placeholder="Type new password"
+                                class="form-control" />
+                            <label for="password" class="text-muted">NEW PASSWORD</label>
+                        </div>
+                        <div class="form-group row">
+                            <input type="password" name="repassword" id="repassword" placeholder="Retype your password"
+                                class="form-control" />
+                            <label for="repassword" class="text-muted">CONFIRM PASSWORD</label>
+                        </div>
+                    </div>
+                    <div class="form-group row pt-3">
+                        <button type="submit" class="btn btn-primary col-12" disabled>Reset Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function sendCode() {
+        $(document).ready(function () {
+            $.ajax({
+                url: "[[@{/send-code}]]",
+                type: "get",
+                data: { email: $("#email").val() },
+                success(data) {
+                    // alert(data)
+                    $("#reset-password").css("display", "block");
+                    $(':input[type="submit"]').prop('disabled', false);
+                    $("#alert").append("<div class='alert alert-success text-center'><span >A verification code has been sent. Please check your email.</span></div>")
+                    $('.alert').fadeOut(6000);
+                }
+            })
+        })
+    }
+</script>
+
+</html>

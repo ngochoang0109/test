@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" href="../../../../static/css/styles.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script type="text/javascript"
+		src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+		crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+		crossorigin="anonymous"></script>
+	<script src="https://kit.fontawesome.com/a6d062c8ed.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    <th:block th:fragment="role-modal">
+        <script>
+            $(document).ready(function () {
+                $('#roleModal').modal({ show: true, backdrop: 'static', keyboard: false });
+            });
+        </script>
+        <!-- Role Selection Modal -->
+        <div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="dialog">
+                <div class="modal-content">
+                    <div class="modal-body m-auto">
+                        <h2 class="text-center pt-3">I am a...</h2>
+                        <div class="row py-4 radio-toolbar">
+                            <div class="btn-group" data-toggle="buttons">
+                                <div class="btn card p-4 mx-2" onclick="document.getElementById('formRole').submit();">
+                                    <img th:src="@{/static/img/teacher.png}" class="m-auto" />
+                                    <h5 class="text-center m-auto pt-3">Teacher</h5>
+                                </div>
+                                <label class="btn card p-4 mx-2 btn-role-select">
+                                    <input type="radio" th:field="*{role}" value="STUDENT" class="d-none" />
+                                    <img th:src="@{/static/img/student.png}" class="m-auto" />
+                                    <h5 class="text-center m-auto pt-3">Student</h5>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="education-level-modal">
+        <script>
+            $(document).ready(function () {
+                $('.btn-role-select').click(function () {
+                    $('#eduModal').modal({ show: true, backdrop: 'static', keyboard: false });
+                })
+            });
+        </script>
+        <!-- Modal -->
+        <div class="modal fade" id="eduModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="dialog">
+                <div class="modal-content d-flex align-items-center" style="min-height:290px;">
+                    <div class="modal-body">
+                        <h2 class="text-center pt-4 pb-5">Please select your education level:</h2>
+                        <div class="row justify-content-center py-1 align-items-center" data-toggle="buttons">
+                            <label class="btn btn-success btn-edu-select mx-1">
+                                <input type="radio" th:field="*{educationLevel}" value="Kindergarten" class="d-none" />
+                                Kindergarten
+                            </label>
+                            <label class="btn btn-primary btn-edu-select mx-1">
+                                <input type="radio" th:field="*{educationLevel}" value="Elementary School"
+                                    class="d-none" />
+                                Elementary School
+                            </label>
+                            <label class="btn btn-secondary btn-edu-select mx-1">
+                                <input type="radio" th:field="*{educationLevel}" value="Secondary School"
+                                    class="d-none">
+                                Secondary School
+                            </label>
+                        </div>
+                        <div class="row justify-content-center py-1 align-items-center" data-toggle="buttons">
+                            <label class="btn btn-danger btn-edu-select mx-1">
+                                <input type="radio" th:field="*{educationLevel}" value="High School" class="d-none">
+                                High School
+                            </label>
+                            <label class="btn btn-dark btn-edu-select mx-1">
+                                <input type="radio" th:field="*{educationLevel}" value="University" class="d-none">
+                                University
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="interests-modal">
+        <script>
+            $(document).ready(function () {
+                $('.btn-edu-select').click(function () {
+                    $('#interestModal').modal({ show: true, backdrop: 'static', keyboard: false });
+                });
+                $(document).on("change", "input[type='checkbox']", function () {
+                     if ($(this).is(':checked')) {
+                         $(this).closest("span").find("label").attr('class', 'btn btn-info');
+                     } else {
+                         $(this).closest("span").find("label").attr('class', 'btn btn-outline-info');
+                    }
+                 });
+            });
+        </script>
+        <!-- Interests Selection Modal -->
+        <div class="modal fade" id="interestModal" tabindex="-3" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="dialog">
+                <div class="modal-content">
+                    <div class="modal-body m-auto">
+                        <h2 class="text-center pt-3 pb-5">Please select your favorite subjects:</h2>
+                        <div class="row justify-content-center align-items-center">
+                        
+                       
+                            <th:block th:each="subject,i : ${subjectList}">
+                       			<span>  
+                       			 
+                                 <input type="checkbox" hidden="true" class="btn-check" autocomplete="off"
+                                   th:field="*{interests[__${i.index}__].id}" th:value="${subject.id}"/>
+                                   
+                                 <label class="btn btn-outline-info " th:text="${subject.name}"
+                                    th:for="'interests' + ${i.index} +'.id1'">
+                                 </label>
+                                 
+                                </span>   
+                                &nbsp;
+                            </th:block>
+                        </div>
+                        <div class="d-flex justify-content-center pt-5">
+                            <button type="submit" class="btn btn-primary">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</body>
+
+</html>

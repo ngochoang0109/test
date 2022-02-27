@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+</head>
+
+<body>
+    <th:block th:fragment="result-modal">
+        <script>
+            $(document).ready(function () {
+                $('#resultModal').modal({ show: true, backdrop: 'static', keyboard: false });
+            });
+        </script>
+        <!-- Modal -->
+        <div class="modal fade" id="resultModal" tabindex="-1" result="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" result="dialog">
+                <div class="modal-content">
+                    <div class="modal-body m-auto" th:object="${finalScore}">
+                        <th:block th:if="${record.score > 5}">
+                            <div class="display-4 text-center pb-3">Nice Job!</div>
+                            <div class="d-flex justify-content-center">
+                                <img class="img-fluid" alt="pass" th:src="@{/static/img/good.png}" />
+                            </div>
+                        </th:block>
+                        <th:block th:unless="${record.score > 5}">
+                            <div class="display-4 text-center pb-3">Try Again Next Time!</div>
+                            <div class="d-flex justify-content-center">
+                                <img class="img-fluid" alt="failed" th:src="@{/static/img/bad.png}" />
+                            </div>
+                        </th:block>
+                        <h3 class="text-center py-3">Score:&nbsp;
+                            <span th:if="${finalScore.score == '0'}">0</span>
+                            <span th:unless="${finalScore.score == '0'}" th:text="${#numbers.formatDecimal(finalScore.score,0,2)}"></span>
+                            &nbsp;out of 10</span></h3>
+                        <div class="d-flex justify-content-center pb-2">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Return</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</body>
+
+</html>

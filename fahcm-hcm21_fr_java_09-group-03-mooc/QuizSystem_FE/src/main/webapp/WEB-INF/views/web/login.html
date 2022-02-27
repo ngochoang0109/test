@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+	<th:block th:insert="~{web/fragments/head :: head-content}"></th:block>
+    <title>Login - Quizzies</title>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    <div class="container-fluid row">
+        <!-- Left Panel -->
+        <div class="col-md-6 container d-flex m-0 left-panel" th:fragment="left-panel">
+            <div class="row display-1 text-dark mx-auto site-banner">
+                Quizzies
+            </div>
+        </div>
+        <!-- Right Panel -->
+        <div class="col-md-4 m-auto">
+            <!-- Navigator -->
+            <nav class="navbar navbar-expand-sm navbar-light pl-0">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link h3" th:href="@{/signup}">Sign up</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link h3" th:href="@{/login}">Log in <span class="sr-only">(current)</span></a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- Log In Form -->
+            <div class="mx-auto">
+            	<th:block th:insert="~{web/fragments/alert :: alert}"></th:block>
+                <a th:href="@{http://localhost:9090/oauth2/authorize/google?redirect_uri=http://localhost:8080/oauth2/redirect}" class="btn btn-google col-12"><img alt="google-logo" th:src="@{static/img/google-logo.png}" class="google-logo"/> Log in with Google</a>
+                <form class="m-3" th:action="@{/login}" method="POST">
+                    <div class="form-group row">
+                        <input type="email" name="email" id="email" placeholder="Type your email"
+                            class="form-control" />
+                        <label for="email" class="text-muted">EMAIL</label>
+                    </div>
+                    <div class="form-group row">
+                        <input type="password" name="password" id="password" placeholder="Type your password"
+                            class="form-control" />
+                        <label for="password" class="text-muted">PASSWORD</label>
+                    </div>
+             
+                    <div class="form-group row pt-3">
+                        <button type="submit" class="btn btn-primary col-12">Log in</button>
+                    </div>
+                </form>
+                <a th:href="@{/forgot-password}" class="text-primary" style="float:right;">Forgot password?</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

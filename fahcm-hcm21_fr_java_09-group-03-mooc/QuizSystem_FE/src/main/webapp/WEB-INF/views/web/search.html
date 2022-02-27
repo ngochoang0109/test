@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+    <th:block th:insert="~{web/fragments/head :: head-content}"></th:block>
+    <title>Search - Quizzies</title>
+</head>
+
+<body>
+    <!-- Header & Navigation Bar -->
+    <th:block th:insert="~{web/fragments/header :: nav}"></th:block>
+    <!-- Body -->
+    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+        <!-- Page Content -->
+        <main class="container-fluid py-5 ml-5" style="min-height:83vh;">
+            <div class="col-10 mx-auto pb-5">
+                <h4>
+                    Search Results:
+                </h4>
+                <div class="row">
+                    <!-- Quiz -->
+                    <th:block th:each="quiz : ${searchList}">
+                        <div class="card quiz-card" th:onclick="|location.href='@{/quiz/view/{id}(id=${quiz.id})}'|">
+                            <div class="card-header m-0 p-0">
+                                <img th:if="${quiz.image}" alt="quiz-banner" th:src="${quiz.image}" />
+                                <img th:unless="${quiz.image}" alt="quiz-banner"
+                                    th:src="@{/static/img/quiz-default-banner.jpg}" />
+                            </div>
+                            <div class="card-body">
+                                <!-- Quiz Title -->
+                                <h5 th:text="${quiz.title}">Title</h5>
+                                <p class="text-muted">
+									<i class="far fa-list-alt"></i>&nbsp;<span
+										th:text="${quiz.questions.size}">10</span>&nbsp;question<span th:if="${quiz.questions.size > 1}">s</span>
+									&nbsp;&nbsp;
+									<i class="far fa-play-circle"></i>&nbsp;<span
+										th:text="${quiz.plays}">1000</span>&nbsp;play<span th:if="${quiz.plays > 1}">s</span>
+								</p>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+        </main>
+        <!-- End of Page Content -->
+
+        <!-- Alert -->
+        <th:block th:insert="~{web/fragments/toast :: alert}"></th:block>
+    </div>
+    <!-- End of Body -->
+
+    <!-- Footer -->
+    <th:block th:insert="~{web/fragments/footer :: footer}"></th:block>
+</body>
+
+</html>

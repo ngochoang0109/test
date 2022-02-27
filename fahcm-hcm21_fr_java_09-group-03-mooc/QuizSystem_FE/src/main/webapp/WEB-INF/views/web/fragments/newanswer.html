@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <th:block th:fragment="new-answer">
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <input type="text" th:name="'questions[' + ${questionNo} + '].answers[' + ${answerNo} + '].text'"
+                    	th:id="'questions' + ${questionNo} + '.answers' + ${answerNo} + '.text'"
+                        placeholder="Enter an answer" class="form-control" required />
+                    <label class="text-muted">ANSWER</label>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="dismissAnswerBtn" style="font-size:18pt">&times;</div>
+            </div>
+            <div class="col-auto">
+                <!-- 1 đáp án đúng -->
+                <div class="form-check pt-4">
+                    <input type="radio" th:id="'questions' + ${questionNo} + '.answers' + ${answerNo} + '.correct1'"
+                        th:name="'questions[' + ${questionNo} + '].answers[' + ${answerNo} + '].correct'" value="1" 
+                        th:class="'form-check-input answer' + ${questionNo}" />
+                    <label class="text-muted form-check-label" th:for="'questions' + ${questionNo} + '.answers' + ${answerNo} + '.correct1'">Correct</label>
+                </div>
+            </div>
+        </div>
+        <!-- New Answer Button -->
+        <div class="new-answer-container">
+            <div class="row">
+                <div class="col-6">
+                    <button type="button" class="btn btn-outline-dark addAnswerBtn" th:attr="data-value=${questionNo}" th:value="${answerNo}">
+                        Add Answer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</body>
+
+</html>

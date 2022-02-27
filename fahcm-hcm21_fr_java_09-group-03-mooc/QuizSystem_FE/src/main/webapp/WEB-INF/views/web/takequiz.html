@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+    <th:block th:insert="~{web/fragments/head :: head-content}"></th:block>
+    <script th:src="@{/static/js/take-quiz.js}"></script>
+    <title>Take Quiz - Quizzies</title>
+</head>
+
+<body>
+    <!-- Header & Navigator -->
+    <th:block th:insert="~{web/fragments/header :: nav}"></th:block>
+    <!-- Quiz Timer -->
+    <div class="d-flex justify-content-end">
+        <div class="display-4 border border-muted m-3 py-3 px-4 text-danger bg-white"
+            style="position:fixed; border-radius:6px; opacity:0.9;">
+            <i class="far fa-clock" style="font-size: 37pt;"></i>
+            <b id="timer">00:00</b>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function startTimer(duration, display) {
+            var timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+                display.textContent = minutes + ":" + seconds;
+                if (--timer == -1) {
+                    alert("Time's Up!");
+                    jQuery("#submitBtn").click();
+                }
+            }, 1000);
+        }
+        window.onload = function () {
+            var min = /*[[${promptQuiz.timeLimit}]]*/ 5;
+            var timelimit = min * 60,
+                display = document.querySelector('#timer');
+            startTimer(timelimit, display);
+        };
+	/*]]>*/
+    </script>
+    <!-- Page Content -->
+    <main class="container-fuild py-5" style="min-height:83vh;">
+        <th:block th:insert="~{web/fragments/alert :: alert}"></th:block>
+        <!-- Quiz -->
+        <div class="col-10 mx-auto pb-5">
+            <!-- Quiz Banner -->
+            <div class="row">
+                <img th:if="${promptQuiz.image}" alt="quiz-banner" th:src="${promptQuiz.image}"
+                class="m-auto img-fluid" style="width:1024px; height:400px; object-fit:cover; z-index:-1;" />
+                <img th:unless="${promptQuiz.image}" alt="quiz-banner" th:src="@{/static/img/quiz-default-banner.jpg}"
+                class="m-auto img-fluid" style="width:1024px; height:400px; object-fit:cover; z-index: -1;" />
+            </div>
+            <!-- Quiz Title -->
+            <div class="row">
+                <h1 class="m-auto py-5" th:text="${promptQuiz.title}"></h1>
+            </div>
+            <!-- Questions + Answers -->
+            <form th:action="@{/auth/quiz/submit}" method="POST" th:object="${userQuiz}" id="prompt">
+                <!-- Hidden field to handle quiz id and start time -->
+                <input type="hidden" th:field="*{id}"> <input type="hidden" th:field="*{startTime}">
+                 <input type="hidden" th:field="*{maxAttempts}">
+                <!-- List câu hỏi đề bài -->
+                <div class="border border-muted col-md-9 p-5 m-auto"
+                    th:each="promptQuestion,i : ${promptQuiz.questions}">
+                    <!-- Hidden field to handle question id -->
+                    <input type="hidden" th:name="'questions[' + ${i.index} + '].id'"
+                        th:id="'questions' + ${i.index} + '.id'" th:value="${promptQuestion.id}" />
+                    <!-- Question -->
+                    <h5 class="pb-4">
+                        <span th:text="${i.index + 1}">1</span>. <span th:text="${promptQuestion.text}">Question</span>
+                    </h5>
+                    <!-- Question Image -->
+                    <img th:if="${promptQuestion.image}" th:src="${promptQuestion.image}" style="width:500px; height:auto" class="img-fluid pb-3" />
+                    <!-- Multiple? -->
+                    <input type="hidden" th:name="'questions[' + ${i.index} + '].multiple'"
+                        th:value="${promptQuestion.multiple}" />
+                    <!-- List đáp án cho câu hỏi -->
+                    <div class="form-check row pl-5" th:each="promptAnswer,j : ${promptQuestion.answers}"
+                        th:switch="${promptQuestion.multiple}">
+                        <input th:case="false" type="radio" class="form-check-input" th:value="${promptAnswer.id}"
+                            th:field="*{questions[__${i.index}__].answers[__${j.index}__].id}" />
+                        <input th:case="true" type="checkbox" class="form-check-input" th:value="${promptAnswer.id}"
+                            th:field="*{questions[__${i.index}__].answers[__${j.index}__].id}" />
+                        <label class="form-check-label"
+                            th:for="'questions' + ${i.index} + '.answers' + ${j.index} + '.id'"
+                            th:text="${promptAnswer.text}">Answer</label>
+                    </div>
+                </div>
+            </form>
+            <div class="row d-flex justify-content-center my-5">
+                <button class="btn btn-primary" type="submit" form="prompt" id="submitBtn">
+                    Submit Quiz
+                </button>
+            </div>
+        </div>
+    </main>
+    <!-- Footer -->
+    <th:block th:insert="~{web/fragments/footer :: footer}"></th:block>
+</body>
+
+</html>

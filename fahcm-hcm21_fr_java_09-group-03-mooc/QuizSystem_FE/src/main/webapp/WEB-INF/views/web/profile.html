@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" th:href="@{/static/css/profile.css}">
+	<th:block th:insert="~{web/fragments/head :: head-content}"></th:block>
+	<link th:href="@{/static/css/profile.css}">
+	<title>Profile - Quizzies</title>
+</head>
+
+<body class="d-flex flex-column bg-primary">
+	<!-- Header & Navigator -->
+	<th:block th:insert="~{web/fragments/header :: nav}"></th:block>
+
+	<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+		<!-- Page Content -->
+		<main class="container-fuild py-5" style="min-height:83vh;">
+			<div class="container emp-profile d-flex justify-content-between">
+				<div class="col-auto">
+					<img th:unless="${session.account?.user}" class="avatar-lg pb-4"
+						th:src="{/static/img/user-default-avatar.png}" alt="avartar" data-holder-rendered="true" />
+					<img th:if="${session.account?.user}" class="avatar-lg pb-4" th:src="${user.avatar}" alt="avartar"
+						data-holder-rendered="true" />
+					<th:block th:insert="~{web/fragments/alert.html :: alert}"></th:block>
+				</div>
+				<div class="col ml-1">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="profile-head">
+								<ul class="nav nav-tabs" id="myTab" role="tablist">
+									<li class="nav-item"><a class="nav-link active" id="about-tab" data-toggle="tab"
+											href="#about" role="tab" aria-controls="about"
+											aria-selected="true">About</a>
+									</li>
+									<li th:if="${session.account?.user.role != 'TEACHER'}" class="nav-item"><a
+											class="nav-link" id="mystats-tab" data-toggle="tab" href="#mystats"
+											role="tab" aria-controls="mystats" aria-selected="false">My
+											Stats</a></li>
+									<li th:if="${session.account?.user.role != 'STUDENT'}" class="nav-item"><a
+											class="nav-link" id="mycollection-tab" data-toggle="tab"
+											href="#mycollection" role="tab" aria-controls="mycollection"
+											aria-selected="false">My
+											Collection</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12 ">
+							<div class="tab-content profile-tab" id="myTabContent">
+								<div class="tab-pane fade show active ml-1" id="about" role="tabpanel"
+									aria-labelledby="about-tab">
+									<div class="row pr-3 justify-content-end">
+										<button type="button" class="btn btn-primary"
+											th:onclick="|location.href='@{/auth/user/editprofile}'|">
+											Edit Profile
+										</button>
+									</div>
+									<div class="row py-1">
+										<div class="col-md-6">
+											<label>Name:</label>
+										</div>
+										<div class="col-md-6">
+											<p th:text="${user.name}"></p>
+										</div>
+									</div>
+									<div class="row py-1">
+										<div class="col-md-6">
+											<label>Date of Birth:</label>
+										</div>
+										<div class="col-md-6">
+											<p th:text="${#dates.format(user.birthdate, 'yyyy-MM-dd')}"></p>
+										</div>
+									</div>
+									<div class="row py-1">
+										<div class="col-md-6">
+											<label>Email:</label>
+										</div>
+										<div class="col-md-6">
+											<p th:text="${user.email}"></p>
+										</div>
+									</div>
+									<th:block th:if="${user.role == 'STUDENT'}">
+										<div class="row py-1">
+											<div class="col-md-6">
+												<label>Education Level:</label>
+											</div>
+											<div class="col-md-6">
+												<p th:text="${user.educationLevel}"></p>
+											</div>
+										</div>
+										<div class="row py-1">
+											<div class="col-md-6">
+												<label>Interests:</label>
+											</div>
+											<div class="col-md-6">
+												<!-- Interests -->
+												<th:block th:each="interest : ${user.interests}">
+													<span th:text="${interest.name}"></span>&nbsp;
+												</th:block>
+											</div>
+										</div>
+									</th:block>
+									<div class="row py-1">
+										<div class="col-md-6">
+											<label>Role:</label>
+										</div>
+										<div class="col-md-6">
+											<p th:text="${user.role}"></p>
+										</div>
+									</div>
+								</div>
+								<div th:if="${session.account?.user.role != 'TEACHER'}" class="tab-pane fade"
+									id="mystats" role="tabpanel" aria-labelledby="mystats-tab">
+									<div class="row">
+										<div class="col-md-12">
+											<div class="table-wrap">
+												<table class="table table-hover">
+													<thead class="text-muted">
+														<tr>
+															<th>#</th>
+															<th>Quiz Title</th>
+															<th>Subjects</th>
+															<th>Submit Time</th>
+															<th>Score</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr th:each="record,i : ${listRecord}">
+															<td th:text="${i.index + 1}">1</td>
+															<td>
+																<a th:text="${record?.quiz?.title}"
+																	th:href="@{/quiz/view/__${record?.quiz?.id}__}">Title</a>
+															</td>
+															<td>
+																<th:block th:each="subject : ${record?.quiz?.subjects}">
+																	<span class="badge badge-warning"
+																		th:text="${subject.name}"></span>
+																</th:block>
+															</td>
+															<td
+																th:text="${#dates.format(record.submitTime, 'yyyy-MM-dd HH:mm')}">
+															</td>
+															<td th:text="${#numbers.formatDecimal(record.score,0,2)}"></td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div th:if="${session.account?.user.role != 'STUDENT'}" class="tab-pane fade"
+									id="mycollection" role="tabpanel" aria-labelledby="mycollection-tab">
+									<div class="row">
+										<div class="col-md-12">
+											<div class="table-wrap">
+												<table class="table table-hover">
+													<thead class="text-muted">
+														<tr>
+															<th>#</th>
+															<th>Quiz Title</th>
+															<th>Subjects</th>
+															<th>Time Limit</th>
+															<th>Education Level</th>
+															<th>Created Date</th>
+															<th>Updated Date</th>
+															<th>Status</th>
+															<th>Actions</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr th:each="quiz,i : ${listQuiz}">
+															<td th:text="${i.index + 1}">1</td>
+															<td>
+																<a th:text="${quiz.title}"
+																	th:href="@{/quiz/view/__${quiz.id}__}">Title</a>
+															</td>
+															<td>
+																<th:block th:each="subject : ${quiz.subjects}">
+																	<span class="badge badge-warning"
+																		th:text="${subject.name}">Math</span>
+																</th:block>
+															</td>
+															<td><span th:text="${quiz.timeLimit}">1</span>:00</td>
+															<td th:text="${quiz.educationLevel}">UNIVERSITY</td>
+															<td
+																th:text="${#dates.format(quiz.createdTime, 'yyyy-MM-dd')}">
+															</td>
+															<td
+																th:text="${#dates.format(quiz.updateTime, 'yyyy-MM-dd')}">
+															</td>
+															<td th:text="${quiz.status}"></td>
+															<td class="text-center" style="min-width:128px">
+																<a th:href="@{/auth/quiz/statistics/__${quiz.id}__}"
+																	class="btn btn-outline-dark btn-just-icon btn-sm">
+																	<i class="far fa-chart-bar"></i>
+																</a>
+																<a th:href="@{/auth/quiz/edit/__${quiz.id}__}"
+																	class="btn btn-outline-dark btn-just-icon btn-sm">
+																	<i class="fas fa-pencil-alt"></i>
+																</a>
+																<th:block
+																	th:insert="~{/web/fragments/fragments :: delete('quiz', ${quiz.id}, '/auth/quiz/delete/' + ${quiz.id}, true)}">
+																</th:block>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<!-- Alert -->
+		<!-- <th:block th:insert="~{web/fragments/toast :: alert}"></th:block> -->
+	</div>
+
+	<!-- Footer -->
+	<th:block th:insert="~{web/fragments/footer :: footer}"></th:block>
+
+	<!-- Modal HTML -->
+	<th:block th:insert="~{web/fragments/modal_fragments :: confirm_modal}"></th:block>
+
+	<script th:src="@{/static/js/common_list.js}"></script>
+	<script type="text/javascript">
+		next = "[[@{/auth/user/myprofile}]]";
+		$(document).ready(function () {
+			$(".link-delete").on("click", function (e) {
+				e.preventDefault();
+				showDeleteConfirmModal($(this), 'quiz', next);
+			});
+			var pageURL = $(location).attr("href");
+			if (pageURL.indexOf("#") != -1) {
+				var tab = pageURL.substr(pageURL.indexOf('#'));
+				$(tab).click();
+			}
+		});
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<th:block th:insert="~{web/fragments/head.html :: head-content}"></th:block>
+	<!-- Custom fonts for this template -->
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+	<!-- Custom styles for this template -->
+	<link th:href="@{/static/css/sb-admin-2.min.css}" rel="stylesheet">
+	<!-- Custom styles for this page -->
+	<link th:href="@{/static/css/dataTables.bootstrap4.min.css}" rel="stylesheet">
+
+	<title>Administration - Quizzies</title>
+</head>
+
+<body id="page-top">
+	<!-- Header & Navigation Bar -->
+	<nav
+		class="navbar navbar-expand-lg navbar-dark bg-danger d-flex flex-row justify-content-between align-items-center">
+		<a class="navbar-brand ml-2 text-white" th:href="@{/}" style="font-size: 22pt; font-weight: 700;"> Quizzies </a>
+		<ul th:if="${session.account?.user}" class="navbar-nav" style="margin-left: 12px;">
+			<li class="nav-item dropdown mr-3 ml-auto mt-2 mt-lg-0"><a class="nav-link" th:href="@{/}"
+					id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<img alt="avatar" class="avatar-sm" th:src="${session.account?.user?.avatar}" />
+				</a>
+				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item" th:href="@{/auth/user/myprofile}"><i class="far fa-id-card"></i>&nbsp;My
+						Profile</a>
+					<div class="dropdown-divider"></div>
+
+					<a class="dropdown-item" th:href="@{/auth/user/myprofile#mystats-tab}"><i
+							class="fas fa-chart-bar"></i>&nbsp;My Stats</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" th:href="@{/auth/user/myprofile#mycollection-tab}"><i
+							class="far fa-folder-open"></i>&nbsp;My Collection</a>
+					<div class="dropdown-divider"></div>
+					<th:block th:if="${session.account?.user.role == 'ADMIN'}">
+						<a class="dropdown-item" th:href="@{/admin/users}"><i
+								class="fas fa-user-shield"></i>&nbsp;Administration</a>
+						<div class="dropdown-divider"></div>
+					</th:block>
+					<a class="dropdown-item" th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i>&nbsp;Log out</a>
+				</div>
+			</li>
+		</ul>
+
+		<script type="text/javascript">
+			urlAutocomplte = "[[@{/autocomplete}]]";
+			urlAddQuestion = "[[@{/auth/quiz/add-question/}]]";
+			urlAddAnswer = "[[@{/auth/quiz/add-answer/}]]";
+		</script>
+	</nav>
+
+	<!-- Page Content -->
+	<main class="container-fuild">
+		<!-- Page Wrapper -->
+		<div id="wrapper">
+
+			<!-- Sidebar -->
+			<ul class="navbar-nav bg-secondary sidebar sidebar-dark accordion" id="accordionSidebar">
+				<!-- Heading -->
+				<div class="sidebar-heading pt-4 pb-2">Management List</div>
+				<!-- Nav Item - Tables -->
+				<li class="nav-item active">
+					<a class="nav-link" th:href="@{/admin/users}">
+						<i class="fas fa-fw fa-table"></i>
+						<span>User Management</span>
+					</a>
+				</li>
+				<li class="nav-item active"><a class="nav-link" th:href="@{/admin/quizzes}"> <i
+							class="fas fa-fw fa-table"></i> <span>Quiz Management</span></a></li>
+			</ul>
+			<!-- End of Sidebar -->
+
+			<!-- Content Wrapper -->
+			<div id="content-wrapper" class="d-flex flex-column">
+
+				<!-- Main Content -->
+				<div id="content">
+					<!-- Topbar -->
+					<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+						<th:block th:insert="~{/web/fragments/fragments :: search_form_and_message('/admin/users/')}" />
+						<!-- Topbar Navbar -->
+						<ul class="navbar-nav ml-auto">
+						</ul>
+					</nav>
+					<!-- End of Topbar -->
+
+					<!-- Begin Page Content -->
+					<div class="container-fluid">
+
+						<!-- Page Heading -->
+						<div class="row justify-content-between align-items-center pb-1 pt-4">
+							<div class="col-auto">
+								<h1 class="h3 mb-2 text-gray-800">Administrative Views</h1>
+							</div>
+
+						</div>
+						<!-- Divider -->
+						<hr class="sidebar-divider d-none d-md-block">
+
+						<!-- Users Table -->
+						<div class="card shadow mb-4">
+							<div class="card-header py-3">
+								<div class="row justify-content-between align-items-center">
+									<div class="col-auto">
+										<h6 class="m-0 font-weight-bold text-primary">User
+											Management</h6>
+									</div>
+									<!-- Export file -->
+									<div class="col-auto">
+										<a class="btn btn-outline-primary text-primary" th:target="_blank"
+											th:href="@{/admin/users/export/excel}"> <i
+												class="fas fa-file-excel"></i>&nbsp;Export to xls
+										</a> <a class="btn btn-outline-primary text-primary" th:target="_blank"
+											th:href="@{/admin/users/export/csv}"> <i
+												class="fas fa-file-csv"></i>&nbsp;Export to csv
+										</a> <a class="btn btn-outline-primary text-primary" th:target="_blank"
+											th:href="@{/admin/users/export/pdf}"> <i
+												class="fas fa-file-pdf"></i>&nbsp;Export to pdf
+										</a>
+									</div>
+								</div>
+							</div>
+							<div class="card-body">
+								<th:block th:insert="~{/web/fragments/fragments :: alert}"></th:block>
+								<div class="table-responsive">
+									<table class="table table-bordered" id="dataTable">
+										<thead>
+											<tr>
+												<th>#</th>
+												<th>
+													<th:block
+														th:insert="~{/web/fragments/fragments :: column_link('name', 'Name', 'tag','/admin/users/')}" />
+												</th>
+												<th>
+													<th:block
+														th:insert="~{/web/fragments/fragments :: column_link('email', 'Email', 'tag','/admin/users/')}" />
+												</th>
+
+												<th>Date of Birth</th>
+												<th>Role</th>
+												<th>Education Level</th>
+												<th>Created Time</th>
+												<th>Update Time</th>
+												<th>Status</th>
+												<th>Action</th>
+											</tr>
+										</thead>
+
+										<tbody>
+											<tr th:each="user,i : ${listUsers}">
+												<td th:text="${(currentPage -1) * 4 + i.index + 1}"></td>
+												<td th:text="${user.name}"></td>
+												<td th:text="${user.email}"></td>
+												<td th:text="${#dates.format(user.birthdate, 'yyyy-MM-dd')}">1998-03-03
+												</td>
+												<td th:text="${user.role}">STUDENT</td>
+												<td th:text="${user.educationLevel}">UNIVERSITY</td>
+												<td th:text="${#dates.format(user.createdTime, 'yyyy-MM-dd')}"></td>
+												<td th:text="${#dates.format(user.updateTime, 'yyyy-MM-dd')}"></td>
+
+												<td class="td-actions text-center">
+
+													<th:block th:unless="${user.role} == 'ADMIN' "
+														th:insert="~{/web/fragments/fragments :: status(${user.status}, 'user', '/admin/users/' + ${user.id})}" />
+												</td>
+												<td class="td-actions text-center">
+													<th:block th:unless="${user.role} == 'ADMIN' "
+														th:insert="~{/web/fragments/fragments :: delete('user', ${user.id}, '/admin/users/delete/' + ${user.id}, true)}" />
+
+												</td>
+											</tr>
+
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+
+						<th:block th:insert="~{/web/fragments/fragments :: pagination('users','/admin/users/')}" />
+					</div>
+					<!-- /.container-fluid -->
+				</div>
+				<!-- End of Main Content -->
+			</div>
+			<!-- End of Content Wrapper -->
+		</div>
+		<!-- End of Page Wrapper -->
+
+		<!-- Scroll to Top Button-->
+		<a class="scroll-to-top rounded" href="#page-top"> <i class="fas fa-angle-up"></i>
+		</a>
+	</main>
+
+
+	<!-- Footer -->
+	<th:block th:insert="~{web/fragments/footer :: footer}"></th:block>
+
+	<th:block th:insert="~{web/fragments/modal_fragments :: confirm_modal}"></th:block>
+
+	<script th:src="@{/static/js/common_list.js}"></script>
+	<script type="text/javascript">
+		next = "[[@{/admin/users}]]";
+
+		$(document).ready(function () {
+			$(".link-delete").on("click", function (e) {
+				e.preventDefault();
+				showDeleteConfirmModal($(this), 'user', next);
+			});
+		});
+	</script>
+</body>
+
+</html>

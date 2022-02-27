@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <th:block th:fragment="new-question">
+        <th:block th:fragment="question-only">
+            <div class="card question-card px-4 pb-5 my-3">
+                <div class="row justify-content-end">
+                    <div class="dismissBtn" style="font-size:22pt">&times;</div>
+                </div> 
+                <div class="row">
+                    <div class="col-7">
+                        <div class="form-group">
+                            <input type="text" th:name="'questions[' + ${questionNo} + '].text'"
+                                th:id="'questions' + ${questionNo} + '.text'" placeholder="Enter a question"
+                                class="form-control" required />
+                            <label class="text-muted">QUESTION</label>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-check pt-4">
+                            <input type="checkbox" th:name="'questions[' + ${questionNo} + '].multiple'" value="1"
+                                th:attr="data-value=${questionNo}" class="form-check-input multiple"
+                                th:id="'questions' + ${questionNo} + '.multiple1'" />
+                            <label class="text-muted form-check-label"
+                                th:for="'questions' + ${questionNo} + '.multiple1'">Multiple Correct Answers</label>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-group">
+                            <input type="file" th:name="'questions[' + ${questionNo} + '].fileImg'" class="form-control"
+                                accept=".png,.jpg,.jpeg" />
+                            <label class="text-muted">IMAGE</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Answer -->
+                <div th:id="'allAnswers' + ${questionNo}">
+                    <div class="row" th:each="answerNo : ${#numbers.sequence(0,1)}">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <input type="text"
+                                    th:name="'questions[' + ${questionNo} + '].answers[' + ${answerNo} + '].text'"
+                                    th:id="'questions' + ${questionNo} + '.answers' + ${answerNo} + '.text'"
+                                    placeholder="Enter an answer" class="form-control" required />
+                                <label class="text-muted">ANSWER</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="dismissAnswerBtn" style="font-size:18pt">&times;</div>
+                        </div>
+                        <div class="col-auto">
+                            <!-- 1 đáp án đúng -->
+                            <div class="form-check pt-4">
+                                <input type="radio"
+                                    th:id="'questions' + ${questionNo} + '.answers' + ${answerNo} + '.correct1'"
+                                    th:name="'questions[' + ${questionNo} + '].answers[' + ${answerNo} + '].correct'"
+                                    value="1" th:class="'form-check-input answer' + ${questionNo}" />
+                                <label class="text-muted form-check-label"
+                                    th:for="'questions' + ${questionNo} + '.answers' + ${answerNo} + '.correct1'">Correct</label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- New Answer Button -->
+                    <div class="new-answer-container">
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-dark addAnswerBtn" value="1"
+                                    th:attr="data-value=${questionNo}">
+                                    Add Answer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of Answer -->
+            </div>
+        </th:block>
+        <!-- New Question Button -->
+        <div>
+            <div class="card question-card p-4 my-3" id="addQuestionBtn" th:attr="data-value=${questionNo}">
+                <div class="d-flex align-items-center justify-content-center my-auto">
+                    <span style="border-bottom: solid 5px #2ad3ce; font-weight:600; padding-bottom:10px;">
+                        + ADD QUESTION
+                    </span>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>

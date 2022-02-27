@@ -1,0 +1,116 @@
+package fa.training.quizsystem_fe.export_file.quizzes;
+
+
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import fa.training.quizsystem_fe.dtos.Quiz;
+import fa.training.quizsystem_fe.dtos.Subject;
+import fa.training.quizsystem_fe.dtos.User;
+import fa.training.quizsystem_fe.utils.AbstractExporter;
+
+public class QuizExcelExporter extends AbstractExporter {
+
+	private XSSFWorkbook workbook;
+	private XSSFSheet sheet;
+
+	public QuizExcelExporter() {
+		workbook = new XSSFWorkbook();
+	}
+
+	private void writeHeaderLine() {
+		sheet = workbook.createSheet("Quizzes");
+		XSSFRow row = sheet.createRow(0);
+
+		XSSFCellStyle cellStyle = workbook.createCellStyle();
+		XSSFFont font = workbook.createFont();
+		font.setBold(true);
+		font.setFontHeight(16);
+		cellStyle.setFont(font);
+
+		createCell(row, 0, "Quiz Id", cellStyle);
+		createCell(row, 1, "Title", cellStyle);
+		createCell(row, 2, "Subjects", cellStyle);
+		createCell(row, 3, "Time Limit", cellStyle);
+		createCell(row, 4, "Education Level", cellStyle);
+		createCell(row, 5, "Created Time", cellStyle);
+		createCell(row, 6, "Update Time", cellStyle);
+		createCell(row, 7, "Status", cellStyle);
+	}
+
+	private void createCell(XSSFRow row, int columnIndex, Object value, CellStyle style) {
+		XSSFCell cell = row.createCell(columnIndex);
+		sheet.autoSizeColumn(columnIndex);
+
+		if (value instanceof Integer) {
+			cell.setCellValue((Integer) value);
+		} else if (value instanceof Long) {
+			cell.setCellValue((Long) value);
+		} else if (value instanceof Boolean) {
+			cell.setCellValue((Boolean) value);
+		} else if (value instanceof Date) {
+			Date date = Calendar.getInstance().getTime();
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String strDate = dateFormat.format(value);
+
+			cell.setCellValue(strDate);
+		}
+		else {
+			cell.setCellValue(value.toString());
+		}
+
+		cell.setCellStyle(style);
+	}
+
+	public void export(List<Quiz> listQuizzes, HttpServletResponse response) throws IOException {
+		super.setResponseHeader(response, "application/octet-stream", ".xlsx", "quizzes_");
+
+		writeHeaderLine();
+		writeDataLines(listQuizzes);
+
+		ServletOutputStream outputStream = response.getOutputStream();
+		workbook.write(outputStream);
+		workbook.close();
+		outputStream.close();
+
+	}
+
+	private void writeDataLines(List<Quiz> listQuizzes) {
+		int rowIndex = 1;
+
+		XSSFCellStyle cellStyle = workbook.createCellStyle();
+		XSSFFont font = workbook.createFont();
+		font.setFontHeight(14);
+		cellStyle.setFont(font);
+
+		for (Quiz quiz : listQuizzes) {
+			XSSFRow row = sheet.createRow(rowIndex++);
+			int columnIndex = 0;
+
+			createCell(row, columnIndex++, quiz.getId(), cellStyle);
+			createCell(row, columnIndex++, quiz.getTitle(), cellStyle);
+			createCell(row, columnIndex++, quiz.getSubjects(), cellStyle);
+			createCell(row, columnIndex++, quiz.getTimeLimit(), cellStyle);
+			createCell(row, columnIndex++, quiz.getEducationLevel(), cellStyle);
+			createCell(row, columnIndex++, quiz.getCreatedTime(), cellStyle);
+			createCell(row, columnIndex++, quiz.getUpdateTime(), cellStyle);
+			createCell(row, columnIndex++, quiz.isStatus(), cellStyle);
+		}
+	}
+}
